@@ -8,24 +8,40 @@ pragma solidity ^0.8.0;
 contract ENS {
     
     // state varibales
-    mapping(string => string) private _domain_to_ip;
-    
     struct Company{
         uint id;
         string comapnyName;
         uint yearOfEstb;
         string category;
     }
-    mapping(string => Company) private _domain_to_company;
     uint public company_counter;
     
-    // logic
-    function getIP(string memory _domain_name) public view returns(string memory ip_){
-        ip_ = _domain_to_ip[_domain_name];
+    mapping(string => string )  private _domain_to_ip;
+    mapping(string => address) public  domain_to_owner;
+    mapping(string => Company) private _domain_to_company;
+    
+    event CompanyRegistered(address owner, string domainName, string companyName);
+    
+    // modifier
+    modifier isOwner(string memory _domain_name) {
+        require(
+            domain_to_owner[_domain_name] == msg.sender,
+            "ENS: you are not the owner"
+            );
+        _;
     }
     
-    function setIP(string memory _domian_name, string memory _ip) public {
-        _domain_to_ip[_domian_name] = _ip;
+    // logic
+    function setIP(
+        string memory _domain_name,
+        string memory _ip
+        ) public isOwner(_domain_name) {
+        
+        _domain_to_ip[_domain_name] = _ip;
+    }
+    
+    function getIP(string memory _domain_name) public view returns(string memory ip_){
+        ip_ = _domain_to_ip[_domain_name];
     }
     
     function registerDomain(
@@ -34,15 +50,25 @@ contract ENS {
             string memory _domain_name,
             string memory _ip,
             uint _year_of_estb
-        ) public {
+        ) public returns(bool flag_) {
             
-        require( _domain_to_company[_domain_name].id == 0 , "ENS: domain already taken" );
-            
+        require( 
+            _domain_to_company[_domain_name].id == 0,
+            "ENS: domain already taken" 
+            );
+        
         company_counter++;
         
-        Company memory company = Company(company_counter,_company_name, _year_of_estb, _category );
-        _domain_to_company[_domain_name] = company;
+         _domain_to_company[_domain_name] = Company(
+                                                company_counter,
+                                                _company_name,
+                                                _year_of_estb,
+                                                _category 
+                                            );
+        domain_to_owner[_domain_name] = msg.sender;
         setIP(_domain_name, _ip);
+        emit CompanyRegistered(msg.sender, _domain_name, _company_name);
+        flag_ = true;
     }
     
     function getCompanyProfile(string memory _domain_name
@@ -54,9 +80,9 @@ contract ENS {
     function updateDomain(
         string memory _old_domain,
         string memory _new_domain
-        ) public {
-            
-        _domain_to_ip[_new_domain] = _domain_to_ip[_old_domain];
+        ) public isOwner(_old_domain) {
+        
+        _domain_to_ip[_new_domain]      = _domain_to_ip[_old_domain];
         _domain_to_company[_new_domain] = _domain_to_company[_old_domain];
         
         delete _domain_to_ip[_old_domain];
