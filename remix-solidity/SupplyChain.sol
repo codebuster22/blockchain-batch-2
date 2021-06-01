@@ -68,7 +68,7 @@ contract Supplychain{
     function addAdmin(address _admin) public onlyAdmin {
         require(
             !users[_admin], 
-            "Supplychain: User cannot be a admin"
+            "Supplychain: User cannot be an admin"
         );
         admins[_admin] = true;
         emit NewAdmin(msg.sender, _admin, block.timestamp);
