@@ -21,3 +21,33 @@ contract Mapping {
     }
     
 }
+
+contract newMapping {
+    mapping(address => bool) private _isUser;
+    
+    event NewUser(address user, bool isUser);
+    
+    function setUser() public {
+        _isUser[msg.sender] = true;
+        emit NewUser(msg.sender, _isUser[msg.sender]);
+    }
+    
+    function checkIfUser() public view returns(bool isUser_){
+        isUser_ = _isUser[msg.sender];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
