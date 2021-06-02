@@ -1,8 +1,9 @@
 pragma solidity ^0.8.0;
 
 import "./IStorage.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
-contract Controller {
+contract Controller is Ownable {
     
     IStorage public store;
     
@@ -11,12 +12,12 @@ contract Controller {
         _;
     }
     
-    function setStorage(IStorage _storage) external {
+    function setStorage(IStorage _storage) onlyOwner external {
         require(_storage != IStorage(address(0)), "Controller: storage cannot be zero");
         store = _storage;
     }
     
-    function setNewController(address _newController) public {
+    function setNewController(address _newController) onlyOwner public {
         store.setController(_newController);
     }
     
