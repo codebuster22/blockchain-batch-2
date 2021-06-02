@@ -12,8 +12,8 @@ contract Storage{
     mapping(address => uint256) private _userIds;
     mapping(uint256 => User) private _users;
     
-    constructor () {
-        controller = msg.sender;
+    constructor (address _controller) {
+        controller = _controller;
     }
     
     modifier onlyController() {
@@ -33,23 +33,26 @@ contract Storage{
     }
     */
     
-    function registerUser(string memory _name, uint8 _age) onlyController initialised public {
+    function registerUser(string memory _name, uint8 _age, address _user) onlyController initialised public {
         _userCounter++;
         User memory user = User(_name, _age);
-        _userIds[msg.sender] = _userCounter;
+        _userIds[_user] = _userCounter;
         _users[_userCounter] = user;
     }
     
     function updateName(string memory _newName, address _user) onlyController initialised public {
-        _users[_userIds[_user]].name = _newName;
+        uint256 userId = _userIds[_user];
+        _users[userId].name = _newName;
     }
     
     function updateAge(uint8 _newAge, address _user) onlyController initialised public {
-        _users[_userIds[_user]].age = _newAge;
+        uint256 userId = _userIds[_user];
+        _users[userId].age = _newAge;
     }
     
     function getUser(address _user) public initialised view returns(User memory user_) {
-        return _users[_userIds[_user]];
+        uint256 userId = _userIds[_user];
+        return _users[userId];
     }
     
     function getUserId(address _user) public initialised view returns(uint id_){
