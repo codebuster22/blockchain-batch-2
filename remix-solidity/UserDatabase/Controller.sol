@@ -1,19 +1,23 @@
 pragma solidity ^0.8.0;
 
-import './Storage.sol';
+import "./IStorage.sol";
 
 contract Controller {
     
-    Storage public store;
+    IStorage public store;
     
     modifier initialised () {
-        require( store != Storage(address(0)), "Controller: storage not initialised" );
+        require( store != IStorage(address(0)), "Controller: storage not initialised" );
         _;
     }
     
-    function initialise(Storage _storage) external {
-        require(store == Storage(address(0)), "Controller: already initialised");
+    function setStorage(IStorage _storage) external {
+        require(_storage != IStorage(address(0)), "Controller: storage cannot be zero");
         store = _storage;
+    }
+    
+    function setNewController(address _newController) public {
+        store.setController(_newController);
     }
     
     function regsiterUser(string memory _name, uint8 _age) initialised public {
@@ -28,9 +32,11 @@ contract Controller {
          store.updateAge(_newAge, msg.sender);
     }
     
-    function getUser() initialised public view returns(bool flag_) {
-        store.getUser(msg.sender);
-        return true;
+    function getUser() initialised public view returns(string memory name_, uint8 age_) {
+        string memory name;
+        uint8 age;
+        (name, age) = store.getUser(msg.sender);
+        return (name, age);
     }
     
     function getUserId() initialised public view returns(uint256 id_){

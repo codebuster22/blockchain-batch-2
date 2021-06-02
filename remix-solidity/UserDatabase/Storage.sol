@@ -50,9 +50,14 @@ contract Storage{
         _users[userId].age = _newAge;
     }
     
-    function getUser(address _user) public initialised view returns(User memory user_) {
+    function setController(address _controller) initialised onlyController public {
+        require(_controller != address(0), "Storage: controller cannot be zero address");
+        controller = _controller;
+    }
+    
+    function getUser(address _user) public initialised view returns(string memory name_, uint8 age_) {
         uint256 userId = _userIds[_user];
-        return _users[userId];
+        return (_users[userId].name, _users[userId].age);
     }
     
     function getUserId(address _user) public initialised view returns(uint id_){
