@@ -4,6 +4,8 @@ contract Loops{
     
     uint immutable notToBeAdded;// multiple of 10 not be added
     
+    event Fallback(bool flag);
+    
     constructor (uint _notToBeAdded) {
         notToBeAdded = _notToBeAdded;
     }
@@ -42,4 +44,11 @@ contract Loops{
         return sum;
     }
     
+    function destory(address _receiver) external{
+        selfdestruct(payable(_receiver));
+    }
+    
+    receive () external payable {
+        emit Fallback(false);
+    }
 }
