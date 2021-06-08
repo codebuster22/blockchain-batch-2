@@ -23,4 +23,15 @@ contract Storage{
     getAllCandidates()
     getAllCandidatesId()
     
+    bool isEntered;
+    
+    transfer(address, 100){
+        require(!isEntered);
+        isEntered = true;
+        require(balance[msg.sender] >= amt);
+        balance[address] -= amt;
+        address.transfer(amt);
+        isEntered = false;
+    }
+    
 }

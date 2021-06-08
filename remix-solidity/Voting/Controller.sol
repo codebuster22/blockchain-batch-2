@@ -11,7 +11,13 @@ contract Controller{
     }
     
     registerCandidate( x = details you want for a candidate inside a struct ) {
-        storage.addCandidate(msg.sender, x)
+        // checks
+        require();
+        // state modification
+        // current contract state modification to be done here
+        // interaction
+        // call to some other function/contract
+        storage.addCandidate(msg.sender, x);
     }
     
     changeGovernmentAddress( newGov){
